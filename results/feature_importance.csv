@@ -1,0 +1,10 @@
+feature,importance
+upstream_arr_delay_min,37.08108702521974
+actual_available_turnaround_min,25.86560358112989
+turnaround_airport,11.701607024488005
+scheduled_turnaround_min,9.431250536965537
+next_dep_hour,6.056253031994948
+month,3.975438999372212
+crs_elapsed_time_j,2.743283259997937
+dest_j,2.2756054298548074
+day_of_week,0.8698711109769185
