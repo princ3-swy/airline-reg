@@ -7,9 +7,9 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 INPUT_FILE   = PROJECT_ROOT / "data_prep" / "flight_pairs.csv"
-RESULTS_DIR  = PROJECT_ROOT / "results"
+RESULTS_DIR  = PROJECT_ROOT / "results" / "ver2"
 
-RESULTS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 FEATURES = [
     "turnaround_airport",

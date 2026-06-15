@@ -65,7 +65,7 @@ print("Cleaning data...")
 REQUIRED_COLS = [
     "MONTH", "DAY_OF_WEEK", "FL_DATE", "OP_UNIQUE_CARRIER",
     "TAIL_NUM", "ORIGIN", "DEST",
-    "CRS_DEP_TIME", "DEP_TIME", "DEP_DELAY_NEW",
+    "CRS_DEP_TIME", "DEP_TIME", "CRS_ARR_TIME", "DEP_DELAY_NEW",
     "ARR_DELAY_NEW", "CANCELLED", "DIVERTED", "CRS_ELAPSED_TIME",
 ]
 
@@ -74,7 +74,7 @@ if missing:
     raise ValueError(f"Missing columns in raw data: {missing}")
 
 NUMERIC_RAW = [
-    "CRS_DEP_TIME", "DEP_TIME", "DEP_DELAY_NEW", "ARR_DELAY_NEW",
+    "CRS_DEP_TIME", "DEP_TIME", "CRS_ARR_TIME", "DEP_DELAY_NEW", "ARR_DELAY_NEW",
     "CANCELLED", "DIVERTED", "CRS_ELAPSED_TIME",
 ]
 for col in NUMERIC_RAW:
@@ -101,7 +101,14 @@ print("Building datetime columns...")
 df["sched_dep_dt"]  = build_datetime(df["FL_DATE"], df["CRS_DEP_TIME"])
 df["actual_dep_dt"] = build_datetime(df["FL_DATE"], df["DEP_TIME"])
 
-df["sched_arr_dt"]  = df["sched_dep_dt"] + pd.to_timedelta(df["CRS_ELAPSED_TIME"], unit="m")
+df["sched_arr_physics"] = df["sched_dep_dt"] + pd.to_timedelta(df["CRS_ELAPSED_TIME"], unit="m")
+df["sched_arr_raw"] = build_datetime(df["FL_DATE"], df["CRS_ARR_TIME"])
+
+tz_diff_hours = ((df["sched_arr_raw"] - df["sched_arr_physics"]).dt.total_seconds() / 3600).round()
+tz_offset = tz_diff_hours % 24
+tz_offset = np.where(tz_offset > 12, tz_offset - 24, tz_offset)
+
+df["sched_arr_dt"]  = df["sched_arr_physics"] + pd.to_timedelta(tz_offset, unit="h")
 df["actual_arr_dt"] = df["sched_arr_dt"] + pd.to_timedelta(df["ARR_DELAY_NEW"], unit="m")
 
 df = df.dropna(subset=["sched_dep_dt", "actual_dep_dt", "sched_arr_dt", "actual_arr_dt"])
