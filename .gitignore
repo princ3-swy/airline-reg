@@ -1,13 +1,9 @@
-# Ignore raw datasets
+
 datasets/*.csv
-
-# Ignore generated training tables
+!datasets/jan_2025_DL.csv
 data_prep/*.csv
-
-# Model outputs and metrics are tracked
 results/predictions.csv
 
-# Python cache and environments
 __pycache__/
 *.py[cod]
 *$py.class
@@ -16,5 +12,4 @@ venv/
 env/
 .env
 
-# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
